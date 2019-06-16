@@ -1,5 +1,7 @@
 name: rw_camera_example
-description: Demonstrates how to use the rw_camera plugin.
+description: Demonstrates how to use the rw_camera plugin
+author: Andrei Klaptsov <skyggedanser@gmail.com>
+homepage: https://github.com/Skyggedans/rw_camera
 publish_to: 'none'
 
 environment:

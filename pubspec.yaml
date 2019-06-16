@@ -1,8 +1,8 @@
 name: rw_camera
 description: Camera Plugin for RealWear HMT-1
 version: 0.0.1
-author: Andrei Klaptsov
-homepage:
+author: Andrei Klaptsov <skyggedanser@gmail.com>
+homepage: https://github.com/Skyggedans/rw_camera
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
