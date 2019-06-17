@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/services.dart';
 import 'dart:typed_data';
 
@@ -13,12 +15,10 @@ class RwCamera {
     CompressFormat format: CompressFormat.PNG,
     quality: 100,
   }) async {
-    return await _channel.invokeMethod(
-        'takePhoto' /*, {
-      'format': format,
+    return await _channel.invokeMethod('takePhoto', {
+      'format': describeEnum(format),
       'quality': quality,
-    }*/
-        );
+    });
   }
 
   static Future<String> recordVideo() async {

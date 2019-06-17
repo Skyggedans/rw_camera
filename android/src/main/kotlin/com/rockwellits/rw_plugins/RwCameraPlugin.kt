@@ -17,11 +17,22 @@ import java.io.ByteArrayOutputStream
 class CameraPluginActivity : Activity() {
     private val CAMERA_REQUEST_CODE = 1889
     private val EXTRA_RESULT = "data"
+    private var format = Bitmap.CompressFormat.PNG
+    private var quality: Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val video = intent.getBooleanExtra("video", false)
+
+        if (intent.hasExtra("format")) {
+            format = Bitmap.CompressFormat.valueOf(intent.getStringExtra("format"))
+        }
+
+        if (intent.hasExtra("quality")) {
+            quality = intent.getIntExtra("quality", 100)
+        }
+
         val intent = Intent(if (video) MediaStore.ACTION_VIDEO_CAPTURE else MediaStore.ACTION_IMAGE_CAPTURE)
 
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
@@ -34,8 +45,7 @@ class CameraPluginActivity : Activity() {
             } else {
                 val bitmap = intent.extras!!.getParcelable<Bitmap>(EXTRA_RESULT)
 
-                RwCameraPlugin.onPhotoResult(bitmap/*, intent.getIntExtra("format", 0),
-                        intent.getIntExtra("quality", 100)*/)
+                RwCameraPlugin.onPhotoResult(bitmap, format, quality)
             }
         }
 
@@ -56,18 +66,18 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
         }
 
         @JvmStatic
-        fun onPhotoResult(bitmap: Bitmap?/*, format: Int, quality: Int*/) {
+        fun onPhotoResult(bitmap: Bitmap?, format: Bitmap.CompressFormat, quality: Int) {
             if (bitmap != null) {
                 val stream = ByteArrayOutputStream()
 
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                bitmap.compress(format, quality, stream)
 
                 val bytes = stream.toByteArray()
 
                 bitmap.recycle()
                 methodResult.success(bytes)
             } else {
-                methodResult.error(null, null, null)
+                methodResult.error("RwCameraPlugin", "Unable to take photo", null)
             }
         }
 
@@ -76,7 +86,7 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
             if (filePath != null) {
                 methodResult.success(filePath)
             } else {
-                methodResult.error(null, null, null)
+                methodResult.error("RwCameraPlugin", "Unable to record video", null)
             }
         }
     }
@@ -86,8 +96,8 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
             val intent = Intent(activity, CameraPluginActivity::class.java)
 
             intent.putExtra("video", false)
-//            intent.putExtra("format", call.argument<Int>("format"))
-//            intent.putExtra("quality", call.argument<Int>("quality"))
+            intent.putExtra("format", call.argument<String>("format"))
+            intent.putExtra("quality", call.argument<Int>("quality"))
 
             methodResult = result
             activity.startActivity(intent)
