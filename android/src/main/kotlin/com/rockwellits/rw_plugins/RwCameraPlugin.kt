@@ -47,6 +47,8 @@ class CameraPluginActivity : Activity() {
 
                 RwCameraPlugin.onPhotoResult(bitmap, format, quality)
             }
+        } else {
+            RwCameraPlugin.onEmptyResult()
         }
 
         finish()
@@ -88,6 +90,11 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
             } else {
                 methodResult.error("RwCameraPlugin", "Unable to record video", null)
             }
+        }
+
+        @JvmStatic
+        fun onEmptyResult() {
+            methodResult.success(null)
         }
     }
 
