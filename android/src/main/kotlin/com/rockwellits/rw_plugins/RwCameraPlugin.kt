@@ -1,11 +1,15 @@
 package com.rockwellits.rw_plugins.rw_camera
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -17,13 +21,14 @@ import java.io.ByteArrayOutputStream
 class CameraPluginActivity : Activity() {
     private val CAMERA_REQUEST_CODE = 1889
     private val EXTRA_RESULT = "data"
+    private var video = false
     private var format = Bitmap.CompressFormat.PNG
     private var quality: Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val video = intent.getBooleanExtra("video", false)
+        video = intent.getBooleanExtra("video", false)
 
         if (intent.hasExtra("format")) {
             format = Bitmap.CompressFormat.valueOf(intent.getStringExtra("format"))
@@ -33,9 +38,9 @@ class CameraPluginActivity : Activity() {
             quality = intent.getIntExtra("quality", 100)
         }
 
-        val intent = Intent(if (video) MediaStore.ACTION_VIDEO_CAPTURE else MediaStore.ACTION_IMAGE_CAPTURE)
-
-        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        if (checkPermissions()) {
+            launchApplet()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -52,6 +57,45 @@ class CameraPluginActivity : Activity() {
         }
 
         finish()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        when (requestCode) {
+            CAMERA_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    launchApplet()
+                } else {
+                    RwCameraPlugin.onEmptyResult()
+                    finish()
+                }
+                return
+            }
+
+            else -> {
+            }
+        }
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    CAMERA_REQUEST_CODE)
+
+            return false
+        }
+
+        return true
+    }
+
+    private fun launchApplet() {
+        val intent = Intent(if (video) MediaStore.ACTION_VIDEO_CAPTURE else
+            MediaStore.ACTION_IMAGE_CAPTURE)
+
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 }
 
