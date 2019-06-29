@@ -1,4 +1,4 @@
-package com.rockwellits.rw_plugins
+package com.rockwellits.rw_plugins.rw_camera
 
 import android.app.Activity
 import android.content.Intent
@@ -79,7 +79,7 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
                 bitmap.recycle()
                 methodResult.success(bytes)
             } else {
-                methodResult.error("RwCameraPlugin", "Unable to take photo", null)
+                methodResult.error(RwCameraPlugin::class.java.canonicalName, "Unable to take photo", null)
             }
         }
 
@@ -88,7 +88,7 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
             if (filePath != null) {
                 methodResult.success(filePath)
             } else {
-                methodResult.error("RwCameraPlugin", "Unable to record video", null)
+                methodResult.error(RwCameraPlugin::class.java.canonicalName, "Unable to record video", null)
             }
         }
 

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rockwellits.rw_plugins">
+    package="com.rockwellits.rw_plugins.rw_camera">
 
     <application>
-        <activity android:name="com.rockwellits.rw_plugins.CameraPluginActivity"></activity>
+        <activity android:name="com.rockwellits.rw_plugins.rw_camera.CameraPluginActivity"></activity>
     </application>
 </manifest>

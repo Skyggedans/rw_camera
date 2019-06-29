@@ -1,4 +1,4 @@
-group 'com.rockwellits.rw_plugins'
+group 'com.rockwellits.rw_plugins.rw_camera'
 version '1.0-SNAPSHOT'
 
 buildscript {
