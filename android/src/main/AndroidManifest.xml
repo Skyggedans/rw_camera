@@ -4,4 +4,5 @@
     <application>
         <activity android:name="com.rockwellits.rw_plugins.rw_camera.CameraPluginActivity"></activity>
     </application>
+    <uses-permission android:name="android.permission.CAMERA"/>
 </manifest>
