@@ -25,7 +25,23 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Camera plugin for RealWear HMT-1(Z1) example app'),
         ),
         body: Center(
-          child: Text('Not implemented yet'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                child: const Text('Take Photo'),
+                onPressed: () async {
+                  await RwCamera.takePhoto();
+                },
+              ),
+              RaisedButton(
+                child: const Text('Record Video'),
+                onPressed: () async {
+                  await RwCamera.recordVideo();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
