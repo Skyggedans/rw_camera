@@ -2,7 +2,10 @@
     package="com.rockwellits.rw_plugins.rw_camera">
 
     <application>
-        <activity android:name="com.rockwellits.rw_plugins.rw_camera.CameraPluginActivity"></activity>
+        <activity
+            android:name="com.rockwellits.rw_plugins.rw_camera.CameraPluginActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+        </activity>
     </application>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

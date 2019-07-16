@@ -22,10 +22,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Camera plugin for RealWear HMT-1(Z1) example app'),
         ),
         body: Center(
-          child: Text('Running on: '),
+          child: Text('Not implemented yet'),
         ),
       ),
     );
