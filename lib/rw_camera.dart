@@ -10,14 +10,18 @@ class RwCamera {
   static MethodChannel _channel =
       MethodChannel('com.rockwellits.rw_plugins/rw_camera');
 
-  static Future<Uint8List> takePhoto({
+  static Future<Uint8List> takePhotoToBytes({
     CompressFormat format: CompressFormat.PNG,
     quality: 100,
   }) async {
-    return await _channel.invokeMethod('takePhoto', {
+    return await _channel.invokeMethod('takePhotoToBytes', {
       'format': describeEnum(format),
       'quality': quality,
     });
+  }
+
+  static Future<String> takePhotoToFile() async {
+    return await _channel.invokeMethod('takePhotoToFile');
   }
 
   static Future<String> recordVideo() async {

@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
               RaisedButton(
                 child: const Text('Take Photo'),
                 onPressed: () async {
-                  await RwCamera.takePhoto();
+                  await RwCamera.takePhotoToFile();
                 },
               ),
               RaisedButton(
