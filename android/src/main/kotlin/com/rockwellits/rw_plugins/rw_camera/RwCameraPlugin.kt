@@ -8,8 +8,12 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -105,16 +109,20 @@ class CameraPluginActivity : Activity() {
     }
 }
 
-class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
+class RwCameraPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+    lateinit var activity: Activity
+
     companion object {
         private const val CHANNEL = "com.rockwellits.rw_plugins/rw_camera"
-        private lateinit var channel: MethodChannel
         private lateinit var methodResult: Result
 
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            channel = MethodChannel(registrar.messenger(), CHANNEL)
-            channel.setMethodCallHandler(RwCameraPlugin(registrar.activity()))
+            val channel = MethodChannel(registrar.messenger(), CHANNEL)
+            val plugin = RwCameraPlugin()
+
+            plugin.activity = registrar.activity()
+            channel.setMethodCallHandler(plugin)
         }
 
         @JvmStatic
@@ -157,33 +165,59 @@ class RwCameraPlugin(private val activity: Activity) : MethodCallHandler {
         }
     }
 
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), CHANNEL)
+
+        channel.setMethodCallHandler(this)
+    }
+
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (call.method == "takePhotoToBytes") {
-            val intent = Intent(activity, CameraPluginActivity::class.java)
+        when (call.method) {
+            "takePhotoToBytes" -> {
+                val intent = Intent(activity, CameraPluginActivity::class.java)
 
-            intent.putExtra("video", false)
-            intent.putExtra("basicPhoto", true)
-            intent.putExtra("format", call.argument<String>("format"))
-            intent.putExtra("quality", call.argument<Int>("quality"))
+                intent.putExtra("video", false)
+                intent.putExtra("basicPhoto", true)
+                intent.putExtra("format", call.argument<String>("format"))
+                intent.putExtra("quality", call.argument<Int>("quality"))
 
-            methodResult = result
-            activity.startActivity(intent)
-        } else if (call.method == "takePhotoToFile") {
-            val intent = Intent(activity, CameraPluginActivity::class.java)
+                methodResult = result
+                activity.startActivity(intent)
+            }
+            "takePhotoToFile" -> {
+                val intent = Intent(activity, CameraPluginActivity::class.java)
 
-            intent.putExtra("video", false)
-            intent.putExtra("basicPhoto", false)
+                intent.putExtra("video", false)
+                intent.putExtra("basicPhoto", false)
 
-            methodResult = result
-            activity.startActivity(intent)
-        } else if (call.method == "recordVideo") {
-            val intent = Intent(activity, CameraPluginActivity::class.java)
+                methodResult = result
+                activity.startActivity(intent)
+            }
+            "recordVideo" -> {
+                val intent = Intent(activity, CameraPluginActivity::class.java)
 
-            intent.putExtra("video", true)
-            methodResult = result
-            activity.startActivity(intent)
-        } else {
-            result.notImplemented()
+                intent.putExtra("video", true)
+                methodResult = result
+                activity.startActivity(intent)
+            }
+            else ->
+                result.notImplemented()
         }
+    }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        this.activity = binding.activity
+    }
+
+    override fun onDetachedFromActivity() {
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     }
 }

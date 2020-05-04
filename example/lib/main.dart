@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:rw_camera/rw_camera.dart';
 
 void main() => runApp(MyApp());

@@ -1,6 +1,6 @@
 # rw_camera
 
-Camera Plugin for RealWear HMT-1(Z1)
+Camera Plugin for RealWear HMT-1(Z1).
 
 ## Usage
 
